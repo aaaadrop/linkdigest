@@ -12,6 +12,8 @@ const translations = {
     summarize: '生成摘要',
     loading: '生成中…',
     resultTitle: '摘要结果',
+    errorGeneric: '出错了，请重试',
+    errorNetwork: '无法连接服务器，请确认后端已启动',
     languageSwitch: 'EN', // 按钮显示"要切换到的语言"
     footer: 'LinkDigest · 太长不看',
   },
@@ -23,6 +25,8 @@ const translations = {
     summarize: 'Summarize',
     loading: 'Generating…',
     resultTitle: 'Summary',
+    errorGeneric: 'Something went wrong, please retry',
+    errorNetwork: 'Cannot reach the server, please make sure the backend is running',
     languageSwitch: '中文',
     footer: 'LinkDigest · TL;DR',
   },

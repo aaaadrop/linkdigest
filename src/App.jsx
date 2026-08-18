@@ -14,7 +14,7 @@ function App() {
 }
 
 function LinkDigestPage() {
-  const { t, toggleLang } = useLanguage()
+  const { t, lang, toggleLang } = useLanguage()
   const [url, setUrl] = useState('')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -27,15 +27,22 @@ function LinkDigestPage() {
     setResult(null)
     try {
       // 调用后端接口（类比前端"发一个 POST 请求给服务器"）
+      // 附带当前界面语言 lang，让 AI 用对应语言输出
       const resp = await fetch(`${API_URL}/api/summarize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, lang }),
       })
       const data = await resp.json()
+      if (!resp.ok) {
+        // 后端返回了错误（如网址打不开），展示友好错误信息
+        setError(data.error || t.errorGeneric)
+        return
+      }
       setResult(data)
     } catch (err) {
-      setError(String(err))
+      // 网络层错误（如后端没启动），展示友好提示
+      setError(t.errorNetwork)
     } finally {
       setLoading(false)
     }

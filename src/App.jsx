@@ -20,6 +20,8 @@ function LinkDigestPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [history, setHistory] = useState([])
+  const [copied, setCopied] = useState(false)
+  const [expandedId, setExpandedId] = useState(null)
 
   // 页面加载时自动拉取历史记录（类比 Java 的初始化方法）
   useEffect(() => {
@@ -67,6 +69,39 @@ function LinkDigestPage() {
     }
   }
 
+  // 复制摘要到剪贴板
+  const handleCopy = async () => {
+    if (!result) return
+    const text = `${result.summary}\n${(result.points || []).map((p) => `- ${p}`).join('\n')}`
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000) // 2秒后恢复按钮文字
+    } catch (err) {
+      console.log('复制失败:', err)
+    }
+  }
+
+  // 导出 Markdown 文件下载
+  const handleExport = () => {
+    if (!result) return
+    const md = `# 链接摘要\n\n> 来源: ${url}\n\n## 摘要\n\n${result.summary}\n\n## 要点\n\n${(result.points || [])
+      .map((p) => `- ${p}`)
+      .join('\n')}\n`
+    // 创建 Blob 并触发浏览器下载（前端生成文件的常用方式）
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = 'linkdigest-summary.md'
+    link.click()
+    URL.revokeObjectURL(link.href)
+  }
+
+  // 历史条目点击展开/收起
+  const toggleExpand = (id) => {
+    setExpandedId((prev) => (prev === id ? null : id))
+  }
+
   return (
     <div className="page">
       <header className="header">
@@ -94,8 +129,26 @@ function LinkDigestPage() {
             onChange={(e) => setUrl(e.target.value)}
             required
           />
+          {url && (
+            <button
+              type="button"
+              className="clear-btn"
+              onClick={() => setUrl('')}
+              aria-label={t.clear}
+              title={t.clear}
+            >
+              ✕
+            </button>
+          )}
           <button type="submit" className="summarize-btn" disabled={loading}>
-            {loading ? t.loading : t.summarize}
+            {loading ? (
+              <span className="loading-wrap">
+                <span className="spinner" />
+                {t.loading}
+              </span>
+            ) : (
+              t.summarize
+            )}
           </button>
         </form>
 
@@ -103,7 +156,25 @@ function LinkDigestPage() {
 
         {result && (
           <div className="result-card">
-            <h2 className="result-title">{t.resultTitle}</h2>
+            <div className="result-head">
+              <h2 className="result-title">{t.resultTitle}</h2>
+              <div className="result-actions">
+                <button
+                  type="button"
+                  className="action-btn"
+                  onClick={handleCopy}
+                >
+                  {copied ? t.copied : t.copy}
+                </button>
+                <button
+                  type="button"
+                  className="action-btn"
+                  onClick={handleExport}
+                >
+                  {t.exportMd}
+                </button>
+              </div>
+            </div>
             <p className="result-summary">{result.summary}</p>
             {result.points && result.points.length > 0 && (
               <ul className="result-points">
@@ -120,12 +191,28 @@ function LinkDigestPage() {
             <h2 className="result-title">{t.historyTitle}</h2>
             <ul className="history-list">
               {history.map((item) => (
-                <li key={item.id} className="history-item">
+                <li
+                  key={item.id}
+                  className="history-item"
+                  onClick={() => toggleExpand(item.id)}
+                >
                   <div className="history-row">
                     <span className="history-url">{item.url}</span>
                     <span className="history-time">{item.createdAt}</span>
                   </div>
-                  <p className="history-summary">{item.summary}</p>
+                  <p className="history-summary">
+                    {item.summary}
+                    <span className="history-toggle">
+                      {expandedId === item.id ? ' ▲' : ' ▼'}
+                    </span>
+                  </p>
+                  {expandedId === item.id && item.points && (
+                    <ul className="history-points">
+                      {item.points.map((p, i) => (
+                        <li key={i}>{p}</li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               ))}
             </ul>

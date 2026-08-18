@@ -4,6 +4,12 @@
 > 这是两周后写简历 bullet point 和面试讲稿的素材库。
 > 约定：**最新记录在最上面（倒序，同 git log）**，新记录插到第一个"##"之前。
 
+## 2026-08-18（D2）适配 Vercel 部署 ✅
+- **做了什么**：Render 要求国际信用卡被排除 → Zeabur 实际也要求绑卡被排除 → 改用 Vercel(免费免卡)。改造：① server/index.js 双模式(app.listen 本地 / module.exports Vercel) ② db.js 双模式数据库(SQLite本地 / Postgres云端, 用 process.env.VERCEL 切换, 接口不变) ③ 安装 pg 驱动 ④ 新建 vercel.json + api/index.js serverless 入口 ⑤ 调用处加 await(async 化)
+- **为什么**：Vercel 大厂免费免卡；Postgres 比 SQLite 更"生产级"(简历加分)；抽象层让上层代码无感知
+- **踩了什么坑**：① Render/Zeabur 免费政策收紧(需国际卡)，不能只看官方宣传文档 ② serverless 无持久磁盘，SQLite 不可用，需换云数据库 ③ async 化后调用处必须加 await
+- **简历素材**：多平台部署对比与选型；Serverless 适配；双模式数据库抽象层(可讲"切换存储只需改配置")
+
 ## 2026-08-18（D2）切换 AI 服务为 Agnes（免费） ✅
 - **做了什么**：用户提供 Agnes 平台免费 key，要求切换。排查过程：① DeepSeek 401 ② apihub.agnes-ai.com 401 ③ 读官方文档(www.agnes-ai.cn)确认正确 Base URL 为 api.agnes-ai.cn/v1 ④ 用 agnes-2.5-flash 测试成功 ⑤ 代码切换：AI_API_URL/AI_API_KEY/AI_MODEL 变量化，.env 改为 AGNES_API_KEY，README 更新，中英文摘要均测试通过
 - **为什么**：Agnes 提供免费文本模型（agnes-2.5-flash），零成本；OpenAI 兼容接口，切换成本低

@@ -2,7 +2,7 @@
 
 > **太长不看？** 粘贴一个网页链接，AI 帮你提炼成 1 分钟能读完的精华摘要 + 关键要点。
 
-LinkDigest 是一个前后端分离的全栈 AI 应用：用户输入网址，后端抓取网页正文，调用 DeepSeek 大模型生成结构化摘要（一句话核心摘要 + 3-5 条关键要点），前端展示并支持复制、导出 Markdown、历史记录管理。支持中英文界面与输出。
+LinkDigest 是一个前后端分离的全栈 AI 应用：用户输入网址，后端抓取网页正文，调用 Agnes AI 大模型生成结构化摘要（一句话核心摘要 + 3-5 条关键要点），前端展示并支持复制、导出 Markdown、历史记录管理。支持中英文界面与输出。
 
 ---
 
@@ -26,7 +26,7 @@ LinkDigest 是一个前后端分离的全栈 AI 应用：用户输入网址，�
 | 前端 | React 19 + Vite 8 | 组件化 UI，HMR 开发 |
 | 后端 | Node.js + Express 5 | REST API 服务 |
 | 数据库 | SQLite (better-sqlite3) | 零配置文件型数据库 |
-| AI | DeepSeek API | 大模型生成摘要（`deepseek-chat`） |
+| AI | Agnes AI API | 大模型生成摘要（`agnes-2.5-flash`，免费） |
 | 其他 | axios / dotenv / cors | HTTP 请求 / 环境变量 / 跨域 |
 
 ---
@@ -36,7 +36,7 @@ LinkDigest 是一个前后端分离的全栈 AI 应用：用户输入网址，�
 ### 前置要求
 
 - Node.js ≥ 18
-- DeepSeek API key（[platform.deepseek.com](https://platform.deepseek.com) 注册获取）
+- Agnes AI API key（[platform.agnes-ai.cn](https://platform.agnes-ai.cn) 注册获取，免费）
 
 ### 1. 安装依赖
 
@@ -54,7 +54,7 @@ npm install
 ```bash
 cd server
 cp .env.example .env   # Windows: copy .env.example .env
-# 编辑 .env，填入你的 DeepSeek API key
+# 编辑 .env，填入你的 Agnes AI API key
 ```
 
 ### 3. 启动开发服务器

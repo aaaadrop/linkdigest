@@ -34,9 +34,12 @@ if (fs.existsSync(distPath)) {
   console.log('已托管前端构建产物: dist/')
 }
 
-// DeepSeek API 配置
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY
-const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions'
+// Agnes AI API 配置（OpenAI 兼容接口）
+// Base URL: https://api.agnes-ai.cn/v1 （国内节点，来自官方文档）
+// 模型: agnes-2.5-flash （免费文本模型）
+const AI_API_KEY = process.env.AGNES_API_KEY
+const AI_API_URL = 'https://api.agnes-ai.cn/v1/chat/completions'
+const AI_MODEL = 'agnes-2.5-flash'
 
 // 路由 1：健康检查接口（类比 @GetMapping("/api/health")）
 app.get('/api/health', (req, res) => {
@@ -104,7 +107,7 @@ app.post('/api/summarize', async (req, res) => {
     const trimmed = text.length > MAX_CHARS ? text.slice(0, MAX_CHARS) + '…' : text
     console.log('提取后正文长度:', trimmed.length, '字符')
 
-    // ---------- 第 2 步：调用 DeepSeek 生成摘要 ----------
+    // ---------- 第 2 步：调用 AI 生成摘要 ----------
     // 按界面语言告诉 AI 用哪种语言输出
     const outputLang =
       lang === 'en'
@@ -114,9 +117,9 @@ app.post('/api/summarize', async (req, res) => {
     let aiResp
     try {
       aiResp = await axios.post(
-        DEEPSEEK_API_URL,
+        AI_API_URL,
         {
-          model: 'deepseek-chat', // DeepSeek 主力对话模型
+          model: AI_MODEL, // Agnes 免费文本模型
           messages: [
             {
               role: 'system',
@@ -133,7 +136,7 @@ app.post('/api/summarize', async (req, res) => {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+            Authorization: `Bearer ${AI_API_KEY}`,
           },
           timeout: 30000,
         }

@@ -8,10 +8,14 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "start": "node server/index.js",
-    "postinstall": "cd server && npm install"
+    "start": "node server/index.js"
   },
   "dependencies": {
+    "axios": "^1.19.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.23.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

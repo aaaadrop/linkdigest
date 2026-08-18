@@ -125,7 +125,13 @@ linkdigest/
 
 ## 📸 截图
 
-> 待补充：请将页面截图放入 `docs/screenshots/` 目录并在此引用。
+**中文界面**
+
+![中文界面](docs/screenshots/chinsesnb.png)
+
+**英文界面**
+
+![英文界面](docs/screenshots/english666.png)
 
 ---
 

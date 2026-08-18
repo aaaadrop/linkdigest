@@ -1,6 +1,10 @@
 // ============================================
 // LinkDigest 后端入口（Node.js + Express）
 // 类比 Java Web：这就是那个"包含 main() 方法的程序"
+//
+// 双模式运行：
+// - 本地开发/自托管：node server/index.js → app.listen(3001) 常驻服务
+// - Vercel Serverless：导出 app，Vercel 按请求调用（不 listen）
 // ============================================
 
 // 引入依赖（类比 Java 的 import）
@@ -8,8 +12,8 @@ const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const fs = require('fs')
-const axios = require('axios') // 用于请求网页 + 调用 DeepSeek API
-require('dotenv').config() // 读取 .env 文件里的密钥
+const axios = require('axios') // 用于请求网页 + 调用 AI API
+require('dotenv').config() // 读取 .env 文件里的密钥（本地开发用）
 const db = require('./db') // 数据库模块（类比 DAO）
 
 // 创建应用实例（类比 new 一个 Spring 应用）
@@ -47,8 +51,8 @@ app.get('/api/health', (req, res) => {
 })
 
 // 路由 1.5：历史记录接口（类比 @GetMapping("/api/history")）
-app.get('/api/history', (req, res) => {
-  const history = db.getHistory()
+app.get('/api/history', async (req, res) => {
+  const history = await db.getHistory()
   res.json(history)
 })
 
@@ -158,7 +162,7 @@ app.post('/api/summarize', async (req, res) => {
     console.log('AI 摘要生成成功:', result.summary)
 
     // 保存到数据库（历史记录功能）
-    db.saveSummary({
+    await db.saveSummary({
       url,
       summary: result.summary,
       points: result.points || [],
@@ -179,8 +183,16 @@ app.post('/api/summarize', async (req, res) => {
   }
 })
 
-// 启动服务器（类比运行 main()）
-const PORT = 3001
-app.listen(PORT, () => {
-  console.log(`LinkDigest 后端已启动: http://localhost:${PORT}`)
-})
+// ---- 启动逻辑 ----
+// Vercel 环境：不 listen，直接导出 app（Vercel 按请求调用）
+// 本地开发/自托管：node server/index.js 时 listen
+if (process.env.VERCEL) {
+  // Vercel Serverless 环境：导出 app
+  module.exports = app
+} else {
+  // 本地/自托管环境：启动常驻服务器（类比运行 main()）
+  const PORT = process.env.PORT || 3001
+  app.listen(PORT, () => {
+    console.log(`LinkDigest 后端已启动: http://localhost:${PORT}`)
+  })
+}

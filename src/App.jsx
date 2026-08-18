@@ -3,9 +3,9 @@ import { LanguageProvider, useLanguage } from './i18n.jsx'
 import './App.css'
 
 // 后端 API 地址：
-// 生产环境：前端由后端托管，同源调用（相对路径 /api/...）
+// 生产环境（EdgeOne）：前端由 EdgeOne 托管，API 走 /express/api/*（函数前缀）
 // 开发环境：Vite 代理把 /api 转发到 3001（见 vite.config.js）
-const API_URL = ''
+const API_URL = '/express'
 
 function App() {
   return (

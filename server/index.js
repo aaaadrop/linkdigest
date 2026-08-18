@@ -8,6 +8,7 @@ const express = require('express')
 const cors = require('cors')
 const axios = require('axios') // 用于请求网页 + 调用 DeepSeek API
 require('dotenv').config() // 读取 .env 文件里的密钥
+const db = require('./db') // 数据库模块（类比 DAO）
 
 // 创建应用实例（类比 new 一个 Spring 应用）
 const app = express()
@@ -25,6 +26,12 @@ const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions'
 // 路由 1：健康检查接口（类比 @GetMapping("/api/health")）
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' })
+})
+
+// 路由 1.5：历史记录接口（类比 @GetMapping("/api/history")）
+app.get('/api/history', (req, res) => {
+  const history = db.getHistory()
+  res.json(history)
 })
 
 // 路由 2：摘要接口（类比 @PostMapping("/api/summarize")）
@@ -131,6 +138,15 @@ app.post('/api/summarize', async (req, res) => {
     const aiContent = aiResp.data.choices[0].message.content
     const result = JSON.parse(aiContent)
     console.log('AI 摘要生成成功:', result.summary)
+
+    // 保存到数据库（历史记录功能）
+    db.saveSummary({
+      url,
+      summary: result.summary,
+      points: result.points || [],
+      lang: lang || 'zh',
+    })
+    console.log('已存入数据库')
 
     res.json(result)
   } catch (err) {

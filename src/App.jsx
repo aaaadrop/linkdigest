@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { LanguageProvider, useLanguage } from './i18n.jsx'
 import './App.css'
 
@@ -19,6 +19,23 @@ function LinkDigestPage() {
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [history, setHistory] = useState([])
+
+  // 页面加载时自动拉取历史记录（类比 Java 的初始化方法）
+  useEffect(() => {
+    fetchHistory()
+  }, [])
+
+  const fetchHistory = async () => {
+    try {
+      const resp = await fetch(`${API_URL}/api/history`)
+      const data = await resp.json()
+      setHistory(data)
+    } catch (err) {
+      // 历史拉取失败不影响主功能，静默处理
+      console.log('拉取历史失败:', err)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -40,6 +57,8 @@ function LinkDigestPage() {
         return
       }
       setResult(data)
+      // 摘要成功后刷新历史列表（新的记录在最上面）
+      fetchHistory()
     } catch (err) {
       // 网络层错误（如后端没启动），展示友好提示
       setError(t.errorNetwork)
@@ -93,6 +112,23 @@ function LinkDigestPage() {
                 ))}
               </ul>
             )}
+          </div>
+        )}
+
+        {history.length > 0 && (
+          <div className="history-card">
+            <h2 className="result-title">{t.historyTitle}</h2>
+            <ul className="history-list">
+              {history.map((item) => (
+                <li key={item.id} className="history-item">
+                  <div className="history-row">
+                    <span className="history-url">{item.url}</span>
+                    <span className="history-time">{item.createdAt}</span>
+                  </div>
+                  <p className="history-summary">{item.summary}</p>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </main>

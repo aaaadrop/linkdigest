@@ -169,6 +169,61 @@
   margin-top: 16px;
 }
 
+/* ---- 历史记录 ---- */
+.history-card {
+  width: 100%;
+  max-width: 680px;
+  margin-top: 28px;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  text-align: left;
+}
+
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.history-item {
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--social-bg, rgba(244, 243, 236, 0.5));
+}
+
+.history-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.history-url {
+  font-size: 13px;
+  color: var(--accent);
+  word-break: break-all;
+  text-decoration: none;
+}
+
+.history-time {
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.history-summary {
+  font-size: 14px;
+  color: var(--text-h);
+  line-height: 1.5;
+}
+
 .summarize-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;

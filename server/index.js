@@ -184,15 +184,16 @@ app.post('/api/summarize', async (req, res) => {
 })
 
 // ---- 启动逻辑 ----
-// Vercel 环境：不 listen，直接导出 app（Vercel 按请求调用）
-// 本地开发/自托管：node server/index.js 时 listen
-if (process.env.VERCEL) {
-  // Vercel Serverless 环境：导出 app
-  module.exports = app
-} else {
+// Node 标准判断：直接运行 node server/index.js 时 require.main === module
+// 被其他模块导入（Vercel/EdgeOne 函数）时 require.main !== module，导出 app
+// 这样不依赖任何平台环境变量，任何 Serverless 平台都能正确适配
+if (require.main === module) {
   // 本地/自托管环境：启动常驻服务器（类比运行 main()）
   const PORT = process.env.PORT || 3001
   app.listen(PORT, () => {
     console.log(`LinkDigest 后端已启动: http://localhost:${PORT}`)
   })
+} else {
+  // Serverless 环境：导出 app（平台按请求调用）
+  module.exports = app
 }

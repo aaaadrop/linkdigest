@@ -10,6 +10,8 @@ const translations = {
     subtitle: '粘贴链接，AI 帮你提炼摘要和关键要点',
     inputPlaceholder: '粘贴网页链接，例如 https://example.com/article',
     summarize: '生成摘要',
+    loading: '生成中…',
+    resultTitle: '摘要结果',
     languageSwitch: 'EN', // 按钮显示"要切换到的语言"
     footer: 'LinkDigest · 太长不看',
   },
@@ -19,6 +21,8 @@ const translations = {
     subtitle: 'Paste a link, let AI distill the summary and key points',
     inputPlaceholder: 'Paste a web link, e.g. https://example.com/article',
     summarize: 'Summarize',
+    loading: 'Generating…',
+    resultTitle: 'Summary',
     languageSwitch: '中文',
     footer: 'LinkDigest · TL;DR',
   },

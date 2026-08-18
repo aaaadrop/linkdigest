@@ -4,6 +4,12 @@
 > 这是两周后写简历 bullet point 和面试讲稿的素材库。
 > 约定：**最新记录在最上面（倒序，同 git log）**，新记录插到第一个"##"之前。
 
+## 2026-08-18（D2）切换 AI 服务为 Agnes（免费） ✅
+- **做了什么**：用户提供 Agnes 平台免费 key，要求切换。排查过程：① DeepSeek 401 ② apihub.agnes-ai.com 401 ③ 读官方文档(www.agnes-ai.cn)确认正确 Base URL 为 api.agnes-ai.cn/v1 ④ 用 agnes-2.5-flash 测试成功 ⑤ 代码切换：AI_API_URL/AI_API_KEY/AI_MODEL 变量化，.env 改为 AGNES_API_KEY，README 更新，中英文摘要均测试通过
+- **为什么**：Agnes 提供免费文本模型（agnes-2.5-flash），零成本；OpenAI 兼容接口，切换成本低
+- **踩了什么坑**：① key 在不同端点表现不同——apihub.agnes-ai.com(国际)无效但 api.agnes-ai.cn(国内)有效，需读官方文档确认正确端点 ② /v1/models 第一次成功复测 401，是缓存/偶发现象，需多次验证 ③ README 修改触发 Vite EBUSY 崩溃(老问题)
+- **简历素材**：多提供商 API 接入与排查（读文档、测端点、验证 key）；抽象 AI 层为可配置变量（切换提供商只改配置）
+
 ## 2026-08-18（D2）部署准备 ✅
 - **做了什么**：① 前端 API 改为相对路径（部署后同源调用），Vite 配置代理在开发时转发 /api → 3001 ② 后端托管 dist：生产时 express.static 提供前端页面 + 非 /api 路由回退 index.html ③ 根 package.json 加 start(启动后端) + postinstall(装 server 依赖) 脚本
 - **为什么**：Render 单服务方案——前端构建产物由后端托管，1 个链接搞定；同源调用避免 CORS 配置

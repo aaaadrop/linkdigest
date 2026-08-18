@@ -17,6 +17,11 @@ dist-ssr
 .env.*
 !.env.example
 
+# Database files —— 运行时数据不入库
+*.db
+*.db-journal
+*.sqlite
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

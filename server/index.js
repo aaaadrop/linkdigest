@@ -6,6 +6,8 @@
 // 引入依赖（类比 Java 的 import）
 const express = require('express')
 const cors = require('cors')
+const path = require('path')
+const fs = require('fs')
 const axios = require('axios') // 用于请求网页 + 调用 DeepSeek API
 require('dotenv').config() // 读取 .env 文件里的密钥
 const db = require('./db') // 数据库模块（类比 DAO）
@@ -18,6 +20,19 @@ const app = express()
 // cors() —— 允许浏览器跨端口访问（前端5173 -> 后端3001），否则浏览器会拦截
 app.use(express.json())
 app.use(cors())
+
+// ---- 生产环境：托管前端构建产物 ----
+// 部署时前端已构建到 dist/ 目录，由 Express 直接提供（这样 1 个链接就够）
+// 开发时 dist 不存在，跳过此逻辑，前端仍由 Vite dev server 提供
+const distPath = path.join(__dirname, '..', 'dist')
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath))
+  // 所有非 /api 请求都返回 index.html（支持前端路由刷新不 404）
+  app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'))
+  })
+  console.log('已托管前端构建产物: dist/')
+}
 
 // DeepSeek API 配置
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY

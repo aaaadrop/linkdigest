@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { LanguageProvider, useLanguage } from './i18n.jsx'
 import './App.css'
 
-// 后端地址：开发时后端跑在 3001 端口
-const API_URL = 'http://localhost:3001'
+// 后端 API 地址：
+// 生产环境：前端由后端托管，同源调用（相对路径 /api/...）
+// 开发环境：Vite 代理把 /api 转发到 3001（见 vite.config.js）
+const API_URL = ''
 
 function App() {
   return (
